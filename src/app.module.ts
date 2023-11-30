@@ -11,7 +11,7 @@ import { CustomerModule } from './customer/customer.module';
     // graphql endpoint => /graphql
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      playground: true,
+      playground: process.env.NODE_ENV !== 'production',
       autoSchemaFile: true,
       context: ({ req, res }) => ({ req, res }),
     }),
