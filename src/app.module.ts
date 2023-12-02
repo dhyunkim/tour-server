@@ -7,6 +7,7 @@ import { SellerModule } from './seller/seller.module';
 import { CustomerModule } from './customer/customer.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
+import { TourModule } from './tour/tour.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { getConnectionOptions } from 'typeorm';
     }),
     SellerModule,
     CustomerModule,
+    TourModule,
   ],
   controllers: [AppController],
   providers: [AppService],
