@@ -6,7 +6,7 @@ export class CustomerResolver {
   constructor(private readonly customerService: CustomerService) {}
 
   @Query(() => Boolean)
-  async testResolver() {
+  async addTourReservation() {
     return true;
   }
 }
