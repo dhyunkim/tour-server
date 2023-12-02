@@ -1,41 +1,41 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
   Entity,
-  Index,
+  Column,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  Index,
+  CreateDateColumn,
 } from 'typeorm';
 
 @ObjectType()
 @Entity()
-export class Tour {
+export class TourReservation {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Index('sellerId')
+  @Index('customerId')
   @Field(() => Int)
   @Column()
-  sellerId: number;
+  customerId: number;
+
+  @Column()
+  tourId: number;
 
   @Field()
-  @Column({ length: 250 })
-  title: string;
+  @Column()
+  reservedAt: Date;
+
+  @Index('token')
+  @Field()
+  @Column()
+  token: string;
 
   @Field()
-  @Column({ default: 5 })
-  reservationLimit: number;
+  @Column({ default: true })
+  tokenStatus: boolean;
 
   @Field()
   @CreateDateColumn()
   createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }
