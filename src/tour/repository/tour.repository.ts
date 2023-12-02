@@ -1,5 +1,4 @@
 import { EntityRepository, Repository } from 'typeorm';
-
 import { Tour } from '../entity';
 
 @EntityRepository(Tour)

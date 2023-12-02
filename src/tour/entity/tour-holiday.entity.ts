@@ -14,8 +14,12 @@ export class TourHoliday {
   id: number;
 
   @Field(() => Int)
-  @Column({ nullable: true })
-  week?: number;
+  @Column()
+  tourId: number;
+
+  @Field()
+  @Column({ length: 15, nullable: true })
+  week?: string;
 
   @Field()
   @Column({ nullable: true })
