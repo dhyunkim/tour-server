@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class tourHoliday1701535464938 implements MigrationInterface {
-  name = 'tourHoliday1701535464938';
+export class tourHoliday1701536576364 implements MigrationInterface {
+  name = 'tourHoliday1701536576364';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -9,7 +9,7 @@ export class tourHoliday1701535464938 implements MigrationInterface {
       \`id\` int NOT NULL AUTO_INCREMENT, 
       \`tourId\` int NOT NULL, 
       \`week\` varchar(15) NULL, 
-      \`day\` datetime NULL, 
+      \`day\` varchar(15) NULL, 
       \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), 
       PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );

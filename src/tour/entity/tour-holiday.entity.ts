@@ -22,8 +22,8 @@ export class TourHoliday {
   week?: string;
 
   @Field()
-  @Column({ nullable: true })
-  day?: Date;
+  @Column({ length: 15, nullable: true })
+  day?: string;
 
   @Field()
   @CreateDateColumn()

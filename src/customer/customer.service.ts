@@ -18,6 +18,14 @@ export class CustomerService {
       throw new BadRequestException('해당 요일은 투어 휴일입니다.');
     }
 
+    const tourDayHoliday = await this.tourService.getTourReservationByDay({
+      tourId,
+      day: dayjs(reservedAt).format('YYYY-MM-DD'),
+    });
+    if (tourDayHoliday) {
+      throw new BadRequestException('해당 날짜는 투어 휴일입니다.');
+    }
+
     return true;
   }
 }

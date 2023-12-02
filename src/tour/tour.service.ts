@@ -4,7 +4,10 @@ import {
   TourRepository,
   TourReservationRepository,
 } from './repository';
-import { IGetTourReservationByWeek } from './interface/get-tour-reservation-by-week.interface';
+import {
+  IGetTourReservationByDay,
+  IGetTourReservationByWeek,
+} from './interface';
 
 @Injectable()
 export class TourService {
@@ -16,5 +19,9 @@ export class TourService {
 
   async getTourReservationByWeek(args: IGetTourReservationByWeek) {
     return this.tourHolidayRepository.getOneByWeek(args);
+  }
+
+  async getTourReservationByDay(args: IGetTourReservationByDay) {
+    return this.tourHolidayRepository.getOneByDay(args);
   }
 }

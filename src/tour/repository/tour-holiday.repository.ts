@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { TourHoliday } from '../entity';
-import { IGetOneByWeek } from './inteface';
+import { IGetOneByDay, IGetOneByWeek } from './inteface';
 
 @EntityRepository(TourHoliday)
 export class TourHolidayRepository extends Repository<TourHoliday> {
@@ -10,6 +10,16 @@ export class TourHolidayRepository extends Repository<TourHoliday> {
       where: {
         tourId,
         week,
+      },
+    });
+  }
+
+  async getOneByDay(args: IGetOneByDay) {
+    const { tourId, day } = args;
+    return this.findOne({
+      where: {
+        tourId,
+        day,
       },
     });
   }
