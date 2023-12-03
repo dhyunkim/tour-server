@@ -5,7 +5,10 @@ import {
   PrimaryGeneratedColumn,
   Index,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Tour } from '../../tour/entity';
 
 @ObjectType()
 @Entity()
@@ -34,4 +37,10 @@ export class TourReservation {
   @Field()
   @CreateDateColumn()
   createdAt: Date;
+
+  @ManyToOne(() => Tour, (entity) => entity.tourReservations, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'tourId' })
+  tour: Tour;
 }

@@ -5,9 +5,11 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { TourReservation } from '../../tour-reservation/entity';
 
 @ObjectType()
 @Entity()
@@ -43,4 +45,7 @@ export class Tour {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @OneToMany(() => TourReservation, (entity) => entity.tour)
+  tourReservations: TourReservation[];
 }
