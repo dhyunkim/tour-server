@@ -11,7 +11,7 @@ import * as redisStore from 'cache-manager-ioredis';
 import { TourModule } from './tour/tour.module';
 import { TourHolidayModule } from './tour-holiday/tour-holiday.module';
 import { TourReservationModule } from './tour-reservation/tour-reservation.module';
-import { isProd } from './common/constatns';
+import { isProd } from './common/constants';
 
 @Module({
   imports: [
