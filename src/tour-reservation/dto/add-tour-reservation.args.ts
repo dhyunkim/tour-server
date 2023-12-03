@@ -13,7 +13,7 @@ export class AddTourReservationArgs {
   @Field(() => Int)
   tourId: number;
 
-  @IsDateString()
-  @Field()
+  @IsDateString({ strict: true, strictSeparator: true })
+  @Field({ description: '예약 날짜 입력 e.g) 2023-12-12' })
   reservedAt: string;
 }

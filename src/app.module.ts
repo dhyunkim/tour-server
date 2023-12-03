@@ -3,11 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { SellerModule } from './seller/seller.module';
-import { CustomerModule } from './customer/customer.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
 import { TourModule } from './tour/tour.module';
+import { TourHolidayModule } from './tour-holiday/tour-holiday.module';
+import { TourReservationModule } from './tour-reservation/tour-reservation.module';
 
 @Module({
   imports: [
@@ -25,9 +25,9 @@ import { TourModule } from './tour/tour.module';
           migrations: [__dirname + '/migration/*.{ts,js}'],
         }),
     }),
-    SellerModule,
-    CustomerModule,
     TourModule,
+    TourHolidayModule,
+    TourReservationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

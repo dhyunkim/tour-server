@@ -16,10 +16,10 @@ export class Tour {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Index('sellerId')
+  @Index('userId')
   @Field(() => Int)
   @Column()
-  sellerId: number;
+  userId: number;
 
   @Field()
   @Column({ length: 250 })

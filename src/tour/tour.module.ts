@@ -1,20 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TourService } from './tour.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  TourHolidayRepository,
-  TourRepository,
-  TourReservationRepository,
-} from './repository';
+import { TourRepository } from './repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      TourRepository,
-      TourHolidayRepository,
-      TourReservationRepository,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([TourRepository])],
   providers: [TourService],
   exports: [TourService],
 })
