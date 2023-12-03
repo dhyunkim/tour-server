@@ -46,7 +46,8 @@
     "dayjs": "^1.11.9",
     "uuid": "^9.0.0",
     "cache-manager": "^4.1.0",
-    "cache-manager-ioredis": "^2.1.0"
+    "cache-manager-ioredis": "^2.1.0",
+    "config": "^3.3.9"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -60,6 +61,7 @@
     "@typescript-eslint/parser": "^5.0.0",
     "@types/uuid": "^9.0.0",
     "@types/cache-manager": "^4.0.2",
+    "@types/config": "^3.3.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
