@@ -8,7 +8,7 @@ export class TourReservationResolver {
     private readonly tourReservationService: TourReservationService,
   ) {}
 
-  @Mutation(() => TourReservationOutput)
+  @Mutation(() => TourReservationOutput, { description: '투어 예약 추가' })
   async addTourReservation(@Args() args: AddTourReservationArgs) {
     return this.tourReservationService.addTourReservation(args);
   }
