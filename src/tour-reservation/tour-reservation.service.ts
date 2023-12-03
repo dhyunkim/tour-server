@@ -6,7 +6,7 @@ import {
 import * as dayjs from 'dayjs';
 import * as uuid from 'uuid';
 import { WeekType } from '../tour-holiday/enum';
-import { IAddTourReservation } from './inteface';
+import { IAddTourReservation, IDeleteTourReservation } from './inteface';
 import { TourReservationRepository } from './repository/tour-reservation.repository';
 import { TourHolidayService } from '../tour-holiday/tour-holiday.service';
 import { TourService } from '../tour/tour.service';
@@ -57,5 +57,23 @@ export class TourReservationService {
     await this.tourReservationRepository.add({ ...args, token });
 
     return token;
+  }
+
+  async deleteTourReservation(args: IDeleteTourReservation) {
+    const reservation = await this.tourReservationRepository.getOneById(
+      args.id,
+    );
+    if (!reservation) {
+      throw new NotFoundException('투어 예약이 존재하지 않습니다.');
+    }
+
+    const threeDaysBeforeByReservationDate = dayjs(
+      reservation.reservationDate,
+    ).subtract(3, 'day');
+    if (dayjs().isAfter(threeDaysBeforeByReservationDate)) {
+      throw new BadRequestException('예약 취소는 3일 전까지 가능합니다.');
+    }
+
+    return this.tourReservationRepository.deleteTourReservation(args.id);
   }
 }
