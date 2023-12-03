@@ -1,11 +1,8 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import * as dayjs from 'dayjs';
 import * as uuid from 'uuid';
 import { WeekType } from '../tour-holiday/enum';
@@ -13,6 +10,7 @@ import { IAddTourReservation, IDeleteTourReservation } from './inteface';
 import { TourReservationRepository } from './repository/tour-reservation.repository';
 import { TourHolidayService } from '../tour-holiday/tour-holiday.service';
 import { TourService } from '../tour/tour.service';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class TourReservationService {
@@ -20,7 +18,7 @@ export class TourReservationService {
     private readonly tourReservationRepository: TourReservationRepository,
     private readonly tourHolidayService: TourHolidayService,
     private readonly tourService: TourService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @InjectRedis() private readonly redisService: Redis,
   ) {}
 
   async addTourReservation(args: IAddTourReservation) {
@@ -69,10 +67,10 @@ export class TourReservationService {
       throw new NotFoundException('투어 상품이 존재하지 않습니다.');
     }
 
-    const cacheKey = `reservation-available-dates-${tourId}-${month}`;
-    const cacheData = await this.cacheManager.get(cacheKey);
+    const cacheKey = `availableDates:${tourId}:${month}`;
+    const cacheData = await this.redisService.get(cacheKey);
     if (cacheData) {
-      return cacheData;
+      return JSON.parse(cacheData);
     }
 
     const lastDay = dayjs(month).daysInMonth();
@@ -123,7 +121,7 @@ export class TourReservationService {
       })
       .filter(Boolean);
 
-    this.cacheManager.set(cacheKey, result);
+    this.redisService.set(cacheKey, JSON.stringify(result), 'EX', 60 * 5);
 
     return result;
   }

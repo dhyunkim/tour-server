@@ -12,6 +12,7 @@ import { TourModule } from './tour/tour.module';
 import { TourHolidayModule } from './tour-holiday/tour-holiday.module';
 import { TourReservationModule } from './tour-reservation/tour-reservation.module';
 import { isProd } from './common/constants';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
@@ -35,6 +36,12 @@ import { isProd } from './common/constants';
       host: config.get('redis.host'),
       port: config.get('redis.port'),
       isGlobal: true,
+    }),
+    RedisModule.forRoot({
+      config: {
+        host: config.get('redis.host'),
+        port: config.get('redis.port'),
+      },
     }),
     TourModule,
     TourHolidayModule,

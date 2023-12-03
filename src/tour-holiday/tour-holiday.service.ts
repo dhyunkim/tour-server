@@ -1,15 +1,14 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TourHolidayRepository } from './repository';
 import { IAddTourSpecificHoliday, IAddTourWeekHoliday } from './interface';
 import { WeekType } from './enum';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class TourHolidayService {
   constructor(
     private readonly tourHolidayRepository: TourHolidayRepository,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @InjectRedis() private readonly redisService: Redis,
   ) {}
 
   async getTourHolidayByWeek(tourId: number, week: WeekType) {
@@ -34,6 +33,8 @@ export class TourHolidayService {
     }
 
     const addResult = await this.tourHolidayRepository.addWeekHoliday(args);
+    await this.removeCacheByTourId(args.tourId);
+
     return addResult.id;
   }
 
@@ -47,6 +48,14 @@ export class TourHolidayService {
     }
 
     const addResult = await this.tourHolidayRepository.addSpecificHoliday(args);
+    await this.removeCacheByTourId(args.tourId);
+
     return addResult.id;
+  }
+
+  private async removeCacheByTourId(tourId: number) {
+    const keysPattern = `availableDates:${tourId}:*`;
+    const keys = await this.redisService.keys(keysPattern);
+    await Promise.all(keys.map((key) => this.redisService.del(key)));
   }
 }
