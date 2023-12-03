@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TourReservationService } from './tour-reservation.service';
-import { AddTourReservationArgs, TourReservationOutput } from './dto';
+import { AddTourReservationArgs } from './dto';
 
 @Resolver()
 export class TourReservationResolver {
@@ -8,7 +8,7 @@ export class TourReservationResolver {
     private readonly tourReservationService: TourReservationService,
   ) {}
 
-  @Mutation(() => TourReservationOutput, { description: '투어 예약 추가' })
+  @Mutation(() => String, { description: '투어 예약 추가' })
   async addTourReservation(@Args() args: AddTourReservationArgs) {
     return this.tourReservationService.addTourReservation(args);
   }

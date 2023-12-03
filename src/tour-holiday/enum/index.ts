@@ -1,1 +1,1 @@
-export * from './holiday.enum';
+export * from './week.enum';

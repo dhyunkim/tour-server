@@ -5,7 +5,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { HolidayType } from '../enum';
+import { WeekType } from '../enum';
 
 @ObjectType()
 @Entity()
@@ -18,13 +18,13 @@ export class TourHoliday {
   @Column()
   tourId: number;
 
-  @Field(() => HolidayType)
-  @Column({ name: 'type', type: 'enum', enum: HolidayType })
-  type: HolidayType;
+  @Field(() => WeekType)
+  @Column({ name: 'week', type: 'enum', enum: WeekType, nullable: true })
+  week?: WeekType;
 
   @Field()
-  @Column({ length: 15 })
-  holiday: string;
+  @Column({ length: 15, nullable: true })
+  specific?: string;
 
   @Field()
   @CreateDateColumn()

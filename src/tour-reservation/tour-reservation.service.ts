@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import * as uuid from 'uuid';
-import { HolidayType } from '../tour-holiday/enum';
+import { WeekType } from '../tour-holiday/enum';
 import { IAddTourReservation } from './inteface';
 import { TourReservationRepository } from './repository/tour-reservation.repository';
 import { TourHolidayService } from '../tour-holiday/tour-holiday.service';
@@ -23,27 +23,20 @@ export class TourReservationService {
     const { tourId, reservationDate } = args;
 
     const date = dayjs(reservationDate);
-    const reservationsForWeekHoliday =
-      await this.tourHolidayService.getTourReservationsByType(
-        tourId,
-        HolidayType.WEEK,
-      );
-    const weekHolidays = reservationsForWeekHoliday.map(
-      (reservations) => reservations.holiday,
+    const weekHoliday = await this.tourHolidayService.getTourReservationByWeek(
+      tourId,
+      date.format('dddd') as WeekType,
     );
-    if (weekHolidays.includes(date.format('dddd'))) {
+    if (weekHoliday) {
       throw new BadRequestException('해당 요일은 투어 휴일입니다.');
     }
 
-    const reservationsForSpecificHoliday =
-      await this.tourHolidayService.getTourReservationsByType(
+    const specificHoliday =
+      await this.tourHolidayService.getTourReservationBySpecific(
         tourId,
-        HolidayType.SPECIFIC,
+        date.format('YYYY-MM-DD'),
       );
-    const specificHolidays = reservationsForSpecificHoliday.map(
-      (reservations) => reservations.holiday,
-    );
-    if (specificHolidays.includes(date.format('YYYY-MM-DD'))) {
+    if (specificHoliday) {
       throw new BadRequestException('해당 날짜는 투어 휴일입니다.');
     }
 
@@ -63,8 +56,6 @@ export class TourReservationService {
     const token = uuid.v4();
     await this.tourReservationRepository.add({ ...args, token });
 
-    return {
-      token,
-    };
+    return token;
   }
 }

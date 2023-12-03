@@ -1,15 +1,33 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { TourHoliday } from '../entity';
-import { HolidayType } from '../enum';
+import { IAddSpecificHoliday, IAddWeekHoliday } from './interface';
+import { WeekType } from '../enum';
 
 @EntityRepository(TourHoliday)
 export class TourHolidayRepository extends Repository<TourHoliday> {
-  async getManyByType(tourId: number, type: HolidayType) {
-    return this.find({
+  async getOneByWeek(tourId: number, week: WeekType) {
+    return this.findOne({
       where: {
         tourId,
-        type,
+        week,
       },
     });
+  }
+
+  async getOneBySpecific(tourId: number, specific: string) {
+    return this.findOne({
+      where: {
+        tourId,
+        specific,
+      },
+    });
+  }
+
+  async addWeekHoliday(args: IAddWeekHoliday) {
+    return this.save(this.create(args));
+  }
+
+  async addSpecificHoliday(args: IAddSpecificHoliday) {
+    return this.save(this.create(args));
   }
 }
