@@ -6,7 +6,7 @@ export class AddTourReservationArgs {
   @Min(1)
   @IsInt()
   @Field(() => Int)
-  customerId: number;
+  userId: number;
 
   @Min(1)
   @IsInt()

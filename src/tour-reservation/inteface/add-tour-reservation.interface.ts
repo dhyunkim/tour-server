@@ -1,5 +1,5 @@
 export interface IAddTourReservation {
-  customerId: number;
+  userId: number;
   tourId: number;
   reservedAt: string;
 }
