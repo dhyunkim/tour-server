@@ -14,12 +14,5 @@
   "migrationsTableName": "migrations",
   "logging": ["schema", "query", "warn", "error"],
   "logger": "advanced-console",
-  "synchronize": false,
-  "cache": {
-    "type": "ioredis",
-    "options": {
-      "host": "localhost",
-      "port": 6379
-    }
-  }
+  "synchronize": false
 }
