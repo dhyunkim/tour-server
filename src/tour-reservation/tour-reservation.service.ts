@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import * as uuid from 'uuid';
 import { HolidayType } from '../tour-holiday/enum';
@@ -45,7 +49,7 @@ export class TourReservationService {
 
     const tour = await this.tourService.getTourById(tourId);
     if (!tour) {
-      throw new BadRequestException('투어 상품이 존재하지 않습니다.');
+      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
     }
 
     const reservationCount =
