@@ -1,8 +1,11 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import * as dayjs from 'dayjs';
 import * as uuid from 'uuid';
 import { WeekType } from '../tour-holiday/enum';
@@ -17,6 +20,7 @@ export class TourReservationService {
     private readonly tourReservationRepository: TourReservationRepository,
     private readonly tourHolidayService: TourHolidayService,
     private readonly tourService: TourService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async addTourReservation(args: IAddTourReservation) {
@@ -63,6 +67,12 @@ export class TourReservationService {
     const tour = await this.tourService.getTourById(tourId);
     if (!tour) {
       throw new NotFoundException('투어 상품이 존재하지 않습니다.');
+    }
+
+    const cacheKey = `reservation-available-dates-${tourId}-${month}`;
+    const cacheData = await this.cacheManager.get(cacheKey);
+    if (cacheData) {
+      return cacheData;
     }
 
     const lastDay = dayjs(month).daysInMonth();
@@ -112,6 +122,8 @@ export class TourReservationService {
         return availableDate;
       })
       .filter(Boolean);
+
+    this.cacheManager.set(cacheKey, result);
 
     return result;
   }
