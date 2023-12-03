@@ -24,6 +24,7 @@ export class TourReservationRepository extends Repository<TourReservation> {
       .andHaving('tourReservation.reservationDate <= :lastDay', {
         lastDay: `${month}-${lastDay}`,
       })
+      .orderBy('tourReservation.reservationDate', 'ASC')
       .getRawMany();
   }
 
