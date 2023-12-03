@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class tourReservation1701581840936 implements MigrationInterface {
-  name = 'tourReservation1701581840936';
+export class tourReservation1701594351553 implements MigrationInterface {
+  name = 'tourReservation1701594351553';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -10,7 +10,7 @@ export class tourReservation1701581840936 implements MigrationInterface {
       \`userId\` int NOT NULL, 
       \`tourId\` int NOT NULL, 
       \`reservationDate\` varchar(10) NOT NULL, 
-      \`token\` varchar(255) NOT NULL, 
+      \`token\` varchar(50) NOT NULL, 
       \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), 
       INDEX \`userId\` (\`userId\`), 
       INDEX \`token\` (\`token\`), 

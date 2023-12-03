@@ -28,7 +28,7 @@ export class TourReservation {
 
   @Index('token')
   @Field()
-  @Column()
+  @Column({ length: 50 })
   token: string;
 
   @Field()
