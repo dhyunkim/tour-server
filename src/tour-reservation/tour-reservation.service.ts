@@ -13,9 +13,9 @@ export class TourReservationService {
   ) {}
 
   async addTourReservation(args: IAddTourReservation) {
-    const { tourId, reservedAt } = args;
+    const { tourId, reservationDate } = args;
 
-    const date = dayjs(reservedAt);
+    const date = dayjs(reservationDate);
     const reservationsForWeekHoliday =
       await this.tourHolidayService.getTourReservationsByType(
         tourId,

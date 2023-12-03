@@ -15,5 +15,5 @@ export class AddTourReservationArgs {
 
   @IsDateString({ strict: true, strictSeparator: true })
   @Field({ description: '예약 날짜 입력 e.g) 2023-12-12' })
-  reservedAt: string;
+  reservationDate: string;
 }
