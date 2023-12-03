@@ -3,7 +3,7 @@ import { Tour } from '../entity';
 
 @EntityRepository(Tour)
 export class TourRepository extends Repository<Tour> {
-  async getManyByToken(token: string) {
+  async getCountByToken(token: string) {
     return this.createQueryBuilder('tour')
       .innerJoinAndSelect('tour.tourReservations', 'tourReservation')
       .where('tour.token = :token', { token })

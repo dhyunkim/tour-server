@@ -16,7 +16,7 @@ export class TourService {
       throw new NotFoundException('투어 상품이 존재하지 않습니다.');
     }
 
-    const toursCount = await this.tourRepository.getManyByToken(token);
+    const toursCount = await this.tourRepository.getCountByToken(token);
 
     const newToken = uuid.v4();
     await this.tourRepository.updateTourToken(tour.id, newToken);
