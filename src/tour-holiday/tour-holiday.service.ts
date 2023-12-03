@@ -15,6 +15,10 @@ export class TourHolidayService {
     return this.tourHolidayRepository.getOneBySpecific(tourId, specific);
   }
 
+  async getTourHolidaysByTourId(tourId: number) {
+    return this.tourHolidayRepository.getManyByTourId(tourId);
+  }
+
   async addTourWeekHoliday(args: IAddTourWeekHoliday) {
     const addResult = await this.tourHolidayRepository.addWeekHoliday(args);
     return addResult.id;

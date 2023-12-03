@@ -2,19 +2,14 @@ import { ArgsType, Field, Int } from '@nestjs/graphql';
 import { IsDateString, IsInt, Length, Min } from 'class-validator';
 
 @ArgsType()
-export class AddTourReservationArgs {
-  @Min(1)
-  @IsInt()
-  @Field(() => Int)
-  userId: number;
-
+export class AvailableDatesForReservationArgs {
   @Min(1)
   @IsInt()
   @Field(() => Int)
   tourId: number;
 
-  @Length(10)
+  @Length(7)
   @IsDateString({ strict: true, strictSeparator: true })
-  @Field({ description: '예약 날짜 입력 e.g) 2023-12-12' })
-  reservationDate: string;
+  @Field({ description: '조회 월 입력 e.g) 2023-12' })
+  month: string;
 }

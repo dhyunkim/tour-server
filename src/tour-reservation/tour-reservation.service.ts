@@ -59,6 +59,63 @@ export class TourReservationService {
     return token;
   }
 
+  async getAvailableDates(tourId: number, month: string) {
+    const tour = await this.tourService.getTourById(tourId);
+    if (!tour) {
+      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
+    }
+
+    const lastDay = dayjs(month).daysInMonth();
+    const reservationDatesAndCount =
+      await this.tourReservationRepository.getReservationDatesAndCount({
+        tourId,
+        month,
+        lastDay,
+      });
+
+    const availableDates: string[] = [];
+    for (let i = 1; i <= lastDay; i++) {
+      const nowDate = `${month}-${i.toString().padStart(2, '0')}`;
+      const isNotAvailable = reservationDatesAndCount.find(
+        (data) =>
+          data.reservationDate === nowDate &&
+          tour.reservationLimit - Number(data.count) <= 0,
+      );
+      if (isNotAvailable) {
+        continue;
+      }
+
+      availableDates.push(nowDate);
+    }
+
+    const holidays = await this.tourHolidayService.getTourHolidaysByTourId(
+      tourId,
+    );
+
+    const result = availableDates
+      .map((availableDate) => {
+        const weekHoliday = holidays.find(
+          (holiday) =>
+            holiday.week === (dayjs(availableDate).format('dddd') as WeekType),
+        );
+        if (weekHoliday) {
+          return;
+        }
+
+        const specificHoliday = holidays.find(
+          (holiday) => holiday.specific === availableDate,
+        );
+        if (specificHoliday) {
+          return;
+        }
+
+        return availableDate;
+      })
+      .filter(Boolean);
+
+    return result;
+  }
+
   async deleteTourReservation(args: IDeleteTourReservation) {
     const reservation = await this.tourReservationRepository.getOneById(
       args.id,
