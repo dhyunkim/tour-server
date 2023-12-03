@@ -12,11 +12,11 @@ export class TourHolidayService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async getTourReservationByWeek(tourId: number, week: WeekType) {
+  async getTourHolidayByWeek(tourId: number, week: WeekType) {
     return this.tourHolidayRepository.getOneByWeek(tourId, week);
   }
 
-  async getTourReservationBySpecific(tourId: number, specific: string) {
+  async getTourHolidayBySpecific(tourId: number, specific: string) {
     return this.tourHolidayRepository.getOneBySpecific(tourId, specific);
   }
 

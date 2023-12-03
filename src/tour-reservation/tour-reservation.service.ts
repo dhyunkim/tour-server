@@ -27,7 +27,7 @@ export class TourReservationService {
     const { tourId, reservationDate } = args;
 
     const date = dayjs(reservationDate);
-    const weekHoliday = await this.tourHolidayService.getTourReservationByWeek(
+    const weekHoliday = await this.tourHolidayService.getTourHolidayByWeek(
       tourId,
       date.format('dddd') as WeekType,
     );
@@ -36,7 +36,7 @@ export class TourReservationService {
     }
 
     const specificHoliday =
-      await this.tourHolidayService.getTourReservationBySpecific(
+      await this.tourHolidayService.getTourHolidayBySpecific(
         tourId,
         date.format('YYYY-MM-DD'),
       );
