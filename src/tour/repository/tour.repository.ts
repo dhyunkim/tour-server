@@ -18,6 +18,10 @@ export class TourRepository extends Repository<Tour> {
     return this.findOne({ where: { token } });
   }
 
+  async add(userId: number, title: string) {
+    return this.save(this.create({ userId, title }));
+  }
+
   async updateTourReservationLimit(id: number, reservationLimit: number) {
     const updateResult = await this.update({ id }, { reservationLimit });
     return updateResult.affected ? true : false;

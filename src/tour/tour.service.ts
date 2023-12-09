@@ -1,4 +1,3 @@
-import * as uuid from 'uuid';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TourRepository } from './repository';
 
@@ -8,6 +7,10 @@ export class TourService {
 
   async getTourById(id: number) {
     return this.tourRepository.getOneById(id);
+  }
+
+  async addTour(userId: number, title: string) {
+    return this.tourRepository.add(userId, title);
   }
 
   async updateTourReservationLimit(id: number, reservationLimit: number) {
