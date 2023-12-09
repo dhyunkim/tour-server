@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ISignup } from './interface';
@@ -15,16 +19,16 @@ export class AuthService {
   /**
    * 이메일 회원가입을 할 때 사용하는 함수입니다.
    */
-  async signup(input: ISignup) {
-    const existsUser = await this.userService.getUserByEmail(input.email);
+  async signup(args: ISignup) {
+    const existsUser = await this.userService.getUserByEmail(args.email);
     if (existsUser) {
       throw new BadRequestException('이미 존재하는 이메일입니다.');
     }
 
-    const hashedPassword = await bcrypt.hash(input.password, 10);
+    const hashedPassword = await bcrypt.hash(args.password, 10);
 
     const newUser = await this.userService.addUser({
-      ...input,
+      ...args,
       password: hashedPassword,
     });
     return this.signJsonWebToken(newUser.id, Role.USER);
@@ -42,5 +46,19 @@ export class AuthService {
     );
 
     return { accessToken, refreshToken };
+  }
+
+  async signin(email: string, password: string) {
+    const user = await this.userService.getUserByEmail(email);
+    if (!user) {
+      throw new NotFoundException('회원가입한 유저가 아닙니다.');
+    }
+
+    const validatePassword = await bcrypt.compare(password, user.password);
+    if (!validatePassword) {
+      throw new BadRequestException('비밀번호가 잘 못 입력되었습니다.');
+    }
+
+    return this.signJsonWebToken(user.id, Role.USER);
   }
 }
