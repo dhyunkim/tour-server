@@ -35,6 +35,7 @@ export class TourResolver {
     return this.tourService.removeTour(args.id);
   }
 
+  @Roles(Role.USER)
   @Mutation(() => Boolean, { description: '투어 예약 제한 수정' })
   async updateTourReservationLimit(
     @Args() args: UpdateTourReservationLimitArgs,
