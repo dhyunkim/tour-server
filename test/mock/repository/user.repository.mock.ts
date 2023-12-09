@@ -1,4 +1,4 @@
-import { User } from '../../src/user/entity';
+import { User } from '../../../src/user/entity';
 
 export const MockUserRepository = () => ({
   getOneByEmail: jest.fn().mockResolvedValue(new User()),

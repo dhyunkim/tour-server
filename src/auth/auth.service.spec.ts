@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
-import { MockJwtService, MockUserService } from '../../test/service';
+import { MockJwtService, MockUserService } from '../../test/mock/service';
 import { ISignup } from './interface';
 import { BadRequestException } from '@nestjs/common';
 

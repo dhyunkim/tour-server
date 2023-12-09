@@ -11,7 +11,6 @@ import { TourModule } from './tour/tour.module';
 import { TourHolidayModule } from './tour-holiday/tour-holiday.module';
 import { TourReservationModule } from './tour-reservation/tour-reservation.module';
 import { isProd } from './common/constants';
-import { RedisModule } from '@nestjs-modules/ioredis';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 
@@ -37,12 +36,6 @@ import { AuthModule } from './auth/auth.module';
       host: config.get('redis.host'),
       port: config.get('redis.port'),
       isGlobal: true,
-    }),
-    RedisModule.forRoot({
-      config: {
-        host: config.get('redis.host'),
-        port: config.get('redis.port'),
-      },
     }),
     TourModule,
     TourHolidayModule,

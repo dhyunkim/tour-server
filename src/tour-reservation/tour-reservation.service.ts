@@ -1,8 +1,11 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import * as dayjs from 'dayjs';
 import * as uuid from 'uuid';
 import { WeekType } from '../tour-holiday/enum';
@@ -14,7 +17,6 @@ import {
 import { TourReservationRepository } from './repository/tour-reservation.repository';
 import { TourHolidayService } from '../tour-holiday/tour-holiday.service';
 import { TourService } from '../tour/tour.service';
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class TourReservationService {
@@ -22,7 +24,7 @@ export class TourReservationService {
     private readonly tourReservationRepository: TourReservationRepository,
     private readonly tourHolidayService: TourHolidayService,
     private readonly tourService: TourService,
-    @InjectRedis() private readonly redisService: Redis,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   /**
@@ -58,7 +60,7 @@ export class TourReservationService {
 
     // 캐싱이 되어있는지 확인하고 캐싱되어있으면 캐싱한 데이터를 반환한다.
     const cacheKey = `availableDatesForReservation:${tourId}:${month}`;
-    const cacheData = await this.redisService.get(cacheKey);
+    const cacheData = await this.cacheManager.get<string>(cacheKey);
     if (cacheData) {
       return JSON.parse(cacheData);
     }
@@ -116,7 +118,7 @@ export class TourReservationService {
       .filter(Boolean);
 
     // 레디스 캐싱한다. TTL은 5분.
-    this.redisService.set(cacheKey, JSON.stringify(result), 'EX', 60 * 5);
+    this.cacheManager.set(cacheKey, JSON.stringify(result), 60 * 5);
 
     return result;
   }

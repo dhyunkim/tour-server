@@ -1,20 +1,22 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { TourHolidayRepository } from './repository';
 import { IAddTourSpecificHoliday, IAddTourWeekHoliday } from './interface';
 import { WeekType } from './enum';
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { TourService } from '../tour/tour.service';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class TourHolidayService {
   constructor(
     private readonly tourHolidayRepository: TourHolidayRepository,
     private readonly tourService: TourService,
-    @InjectRedis() private readonly redisService: Redis,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   /**
@@ -88,8 +90,8 @@ export class TourHolidayService {
    * 투어의 캐시들을 초기화하는 함수.
    */
   private async removeCacheByTourId(tourId: number) {
-    const keysPattern = `availableDates:${tourId}:*`;
-    const keys = await this.redisService.keys(keysPattern);
-    await Promise.all(keys.map((key) => this.redisService.del(key)));
+    const keysPattern = `availableDatesForReservation:${tourId}:*`;
+    const keys = await this.cacheManager.store.keys(keysPattern);
+    await Promise.all(keys.map((key) => this.cacheManager.del(key)));
   }
 }
