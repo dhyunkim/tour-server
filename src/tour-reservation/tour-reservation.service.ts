@@ -6,7 +6,11 @@ import {
 import * as dayjs from 'dayjs';
 import * as uuid from 'uuid';
 import { WeekType } from '../tour-holiday/enum';
-import { IAddTourReservation, IDeleteTourReservation } from './inteface';
+import {
+  IAddTourReservation,
+  IDeleteTourReservation,
+  IGetReservationByToken,
+} from './inteface';
 import { TourReservationRepository } from './repository/tour-reservation.repository';
 import { TourHolidayService } from '../tour-holiday/tour-holiday.service';
 import { TourService } from '../tour/tour.service';
@@ -21,7 +25,11 @@ export class TourReservationService {
     @InjectRedis() private readonly redisService: Redis,
   ) {}
 
-  async getReservationByToken(tourId: number, token: string) {
+  /**
+   * 토큰으로 고객의 예약 여부를 확인하는 함수.
+   */
+  async getReservationByToken(args: IGetReservationByToken) {
+    const { tourId, token } = args;
     const tourReservation = await this.tourReservationRepository.getOneByToken(
       tourId,
       token,
@@ -30,9 +38,13 @@ export class TourReservationService {
       throw new NotFoundException('고객의 투어 예약이 존재하지 않습니다.');
     }
 
+    // 기존 토큰을 만료시키고 새로운 토큰으로 갱신한다.
     const newToken = uuid.v4();
-    await this.tourReservationRepository.updateTourToken(tourId, newToken);
-    return true;
+    return this.tourReservationRepository.updateTourToken({
+      ...args,
+      userId: tourReservation.userId,
+      token: newToken,
+    });
   }
 
   async getAvailableDates(tourId: number, month: string) {

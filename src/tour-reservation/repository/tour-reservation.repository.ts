@@ -4,6 +4,7 @@ import {
   IAdd,
   IGetReservationDatesAndCount,
   IGetReservationDatesAndCountResult,
+  IUpdateTourToken,
 } from './inteface';
 
 @EntityRepository(TourReservation)
@@ -48,8 +49,9 @@ export class TourReservationRepository extends Repository<TourReservation> {
     return this.save(this.create(args));
   }
 
-  async updateTourToken(id: number, token: string) {
-    const updateResult = await this.update({ id }, { token });
+  async updateTourToken(args: IUpdateTourToken) {
+    const { tourId, userId, token } = args;
+    const updateResult = await this.update({ tourId, userId }, { token });
     return updateResult.affected ? true : false;
   }
 
