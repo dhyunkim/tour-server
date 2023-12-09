@@ -17,8 +17,8 @@ export class TourReservationRepository extends Repository<TourReservation> {
     return this.findOne({ where: { tourId, token } });
   }
 
-  async getOneByUser(tourId: number, userId: number) {
-    return this.findOne({ where: { tourId, userId } });
+  async getOneByUser(tourId: number, userId: number, reservationDate: string) {
+    return this.findOne({ where: { tourId, userId, reservationDate } });
   }
 
   async getReservationDatesAndCount(
@@ -27,7 +27,7 @@ export class TourReservationRepository extends Repository<TourReservation> {
     const { tourId, month, lastDay } = args;
     return this.createQueryBuilder('tourReservation')
       .select(
-        'tourReservation.reservationDate AS reservationDate, COUNT(tourReservation.reservationDate) AS COUNT',
+        'tourReservation.reservationDate AS reservationDate, COUNT(tourReservation.reservationDate) AS count',
       )
       .where('tourReservation.tourId = :tourId', { tourId })
       .groupBy('tourReservation.reservationDate')

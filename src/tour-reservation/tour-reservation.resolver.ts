@@ -2,7 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TourReservationService } from './tour-reservation.service';
 import {
   AddTourReservationArgs,
-  AvailableDatesForReservationArgs,
+  AvailableDatesByMonthForReservationArgs,
   DeleteTourReservationArgs,
   TourReservationByTokenArgs,
 } from './dto';
@@ -20,10 +20,10 @@ export class TourReservationResolver {
   @Query(() => [String], {
     description: '월 단위로 예약 가능한 날짜 목록 조회',
   })
-  async availableDatesForReservation(
-    @Args() args: AvailableDatesForReservationArgs,
+  async availableDatesByMonthForReservation(
+    @Args() args: AvailableDatesByMonthForReservationArgs,
   ) {
-    return this.tourReservationService.getAvailableDates(
+    return this.tourReservationService.getAvailableDatesByMonth(
       args.tourId,
       args.month,
     );

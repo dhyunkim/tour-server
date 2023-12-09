@@ -50,18 +50,20 @@ export class TourReservationService {
   /**
    * 월단위로 예약가능한 날들을 조회하는 함수.
    */
-  async getAvailableDates(tourId: number, month: string) {
+  async getAvailableDatesByMonth(tourId: number, month: string) {
     const tour = await this.tourService.getTourById(tourId);
     if (!tour) {
       throw new NotFoundException('투어 상품이 존재하지 않습니다.');
     }
 
-    const cacheKey = `availableDates:${tourId}:${month}`;
+    // 캐싱이 되어있는지 확인하고 캐싱되어있으면 캐싱한 데이터를 반환한다.
+    const cacheKey = `availableDatesForReservation:${tourId}:${month}`;
     const cacheData = await this.redisService.get(cacheKey);
     if (cacheData) {
       return JSON.parse(cacheData);
     }
 
+    // 입력받은 월의 날짜별 예약수를 조회한다.
     const lastDay = dayjs(month).daysInMonth();
     const reservationDatesAndCount =
       await this.tourReservationRepository.getReservationDatesAndCount({
@@ -70,13 +72,14 @@ export class TourReservationService {
         lastDay,
       });
 
+    // 입력받은 월의 각 날짜 예약이 투어 예약 제한을 초과했는지 확인.
     const availableDates: string[] = [];
     for (let i = 1; i <= lastDay; i++) {
       const nowDate = `${month}-${i.toString().padStart(2, '0')}`;
       const isNotAvailable = reservationDatesAndCount.find(
         (data) =>
           data.reservationDate === nowDate &&
-          tour.reservationLimit - Number(data.count) <= 0,
+          tour.reservationLimit <= Number(data.count),
       );
       if (isNotAvailable) {
         continue;
@@ -85,10 +88,12 @@ export class TourReservationService {
       availableDates.push(nowDate);
     }
 
+    // 투어의 휴일들을 조회.
     const holidays = await this.tourHolidayService.getTourHolidaysByTourId(
       tourId,
     );
 
+    // 위에서 구한 날들이 휴일인지 검증.
     const result = availableDates
       .map((availableDate) => {
         const weekHoliday = holidays.find(
@@ -110,6 +115,7 @@ export class TourReservationService {
       })
       .filter(Boolean);
 
+    // 레디스 캐싱한다. TTL은 5분.
     this.redisService.set(cacheKey, JSON.stringify(result), 'EX', 60 * 5);
 
     return result;
@@ -128,6 +134,7 @@ export class TourReservationService {
     const isAlreadyReserved = await this.tourReservationRepository.getOneByUser(
       tourId,
       userId,
+      reservationDate,
     );
     if (isAlreadyReserved) {
       throw new NotFoundException('이미 예약한 투어 상품입니다.');

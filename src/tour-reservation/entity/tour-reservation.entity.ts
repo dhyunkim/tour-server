@@ -7,18 +7,17 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
-  Unique,
 } from 'typeorm';
 import { Tour } from '../../tour/entity';
 
 @ObjectType()
-@Unique('unique_userId_tourId', ['userId', 'tourId'])
 @Entity()
 export class TourReservation {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index('userId')
   @Field(() => Int)
   @Column()
   userId: number;

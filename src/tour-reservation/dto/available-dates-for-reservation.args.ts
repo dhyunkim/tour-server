@@ -2,7 +2,7 @@ import { ArgsType, Field, Int } from '@nestjs/graphql';
 import { IsDateString, IsInt, Length, Min } from 'class-validator';
 
 @ArgsType()
-export class AvailableDatesForReservationArgs {
+export class AvailableDatesByMonthForReservationArgs {
   @Min(1)
   @IsInt()
   @Field(() => Int)

@@ -56,7 +56,7 @@ export class TourHolidayService {
     }
 
     const addResult = await this.tourHolidayRepository.addWeekHoliday(args);
-    await this.removeCacheByTourId(args.tourId);
+    await this.removeCacheByTourId(args.tourId); // 투어의 캐싱을 삭제한다.
 
     return addResult.id;
   }
@@ -79,7 +79,7 @@ export class TourHolidayService {
     }
 
     const addResult = await this.tourHolidayRepository.addSpecificHoliday(args);
-    await this.removeCacheByTourId(args.tourId);
+    await this.removeCacheByTourId(args.tourId); // 투어의 캐싱을 삭제한다.
 
     return addResult.id;
   }
