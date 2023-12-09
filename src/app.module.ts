@@ -13,6 +13,8 @@ import { TourHolidayModule } from './tour-holiday/tour-holiday.module';
 import { TourReservationModule } from './tour-reservation/tour-reservation.module';
 import { isProd } from './common/constants';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     TourModule,
     TourHolidayModule,
     TourReservationModule,
+    UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

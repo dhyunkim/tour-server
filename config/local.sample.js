@@ -3,4 +3,7 @@ module.exports = {
     host: 'localhost',
     port: 6379,
   },
+  jwt: {
+    secret: 'tour',
+  },
 };
