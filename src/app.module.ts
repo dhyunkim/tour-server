@@ -32,7 +32,6 @@ import { AuthModule } from './auth/auth.module';
     }),
     CacheModule.register({
       store: redisStore,
-      ttl: 60,
       host: config.get('redis.host'),
       port: config.get('redis.port'),
       isGlobal: true,
