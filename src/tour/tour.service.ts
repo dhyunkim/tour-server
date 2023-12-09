@@ -10,7 +10,8 @@ export class TourService {
   }
 
   async addTour(userId: number, title: string) {
-    return this.tourRepository.add(userId, title);
+    await this.tourRepository.add(userId, title);
+    return true;
   }
 
   async updateTourReservationLimit(id: number, reservationLimit: number) {

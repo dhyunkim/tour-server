@@ -7,7 +7,4 @@ export class AddTourArgs {
   @IsString()
   @Field()
   title: string;
-
-  @Field()
-  userId: number;
 }

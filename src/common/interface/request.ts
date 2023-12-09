@@ -4,7 +4,6 @@ export type IUser = {
   id: number;
   role: Role;
   exp: number;
-  refresh?: boolean;
 };
 
 export interface IRequest {
