@@ -8,8 +8,16 @@ import {
 
 @EntityRepository(TourReservation)
 export class TourReservationRepository extends Repository<TourReservation> {
+  async getOneById(id) {
+    return this.findOne(id);
+  }
+
   async getOneByToken(tourId: number, token: string) {
     return this.findOne({ where: { tourId, token } });
+  }
+
+  async getOneByUser(tourId: number, userId: number) {
+    return this.findOne({ where: { tourId, userId } });
   }
 
   async getReservationDatesAndCount(
@@ -34,10 +42,6 @@ export class TourReservationRepository extends Repository<TourReservation> {
 
   async getCountByReservationDate(reservationDate: string) {
     return this.count({ where: { reservationDate } });
-  }
-
-  async getOneById(id: number) {
-    return this.findOne(id);
   }
 
   async add(args: IAdd) {

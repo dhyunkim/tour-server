@@ -54,7 +54,7 @@ export class TourReservationResolver {
 
   @Roles(Role.USER)
   @Mutation(() => Boolean, { description: '투어 예약 취소' })
-  async deleteTourReservation(@Args() args: DeleteTourReservationArgs) {
-    return this.tourReservationService.deleteTourReservation(args);
+  async removeTourReservation(@Args() args: DeleteTourReservationArgs) {
+    return this.tourReservationService.removeTourReservation(args);
   }
 }

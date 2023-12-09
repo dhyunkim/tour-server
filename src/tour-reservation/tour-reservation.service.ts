@@ -100,18 +100,35 @@ export class TourReservationService {
     return result;
   }
 
+  /**
+   * 투어 예약을 추가하는 함수.
+   */
   async addTourReservation(args: IAddTourReservation) {
-    const { tourId, reservationDate } = args;
+    const { tourId, reservationDate, userId } = args;
+    const tour = await this.tourService.getTourById(tourId);
+    if (!tour) {
+      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
+    }
 
+    const isAlreadyReserved = await this.tourReservationRepository.getOneByUser(
+      tourId,
+      userId,
+    );
+    if (isAlreadyReserved) {
+      throw new NotFoundException('이미 예약한 투어 상품입니다.');
+    }
+
+    // 입력한 날짜가 휴일(요일)인지 확인.
     const date = dayjs(reservationDate);
     const weekHoliday = await this.tourHolidayService.getTourHolidayByWeek(
       tourId,
-      date.format('dddd') as WeekType,
+      date.format('dddd') as WeekType, // 날짜를 요일로 변환 e.g) 2023-12-09 => Saturday
     );
     if (weekHoliday) {
       throw new BadRequestException('해당 요일은 투어 휴일입니다.');
     }
 
+    // 입력한 날짜가 휴일(날짜)인지 확인.
     const specificHoliday =
       await this.tourHolidayService.getTourHolidayBySpecific(
         tourId,
@@ -121,11 +138,7 @@ export class TourReservationService {
       throw new BadRequestException('해당 날짜는 투어 휴일입니다.');
     }
 
-    const tour = await this.tourService.getTourById(tourId);
-    if (!tour) {
-      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
-    }
-
+    // 예약수가 가득찼는지 확인.
     const reservationCount =
       await this.tourReservationRepository.getCountByReservationDate(
         reservationDate,
@@ -134,24 +147,28 @@ export class TourReservationService {
       throw new BadRequestException('예약수가 가득 찼습니다.');
     }
 
+    // 토큰 생성 및 저장.
     const token = uuid.v4();
     await this.tourReservationRepository.add({ ...args, token });
 
     return token;
   }
 
-  async deleteTourReservation(args: IDeleteTourReservation) {
+  /**
+   * 투어 예약을 취소하는 함수.
+   */
+  async removeTourReservation(args: IDeleteTourReservation) {
     const reservation = await this.tourReservationRepository.getOneById(
       args.id,
     );
     if (!reservation) {
-      throw new NotFoundException('투어 예약이 존재하지 않습니다.');
+      throw new NotFoundException('예약이 존재하지 않습니다.');
     }
 
-    const threeDaysBeforeByReservationDate = dayjs(
+    const threeDaysBeforeFromReservationDate = dayjs(
       reservation.reservationDate,
     ).subtract(3, 'day');
-    if (dayjs().isAfter(threeDaysBeforeByReservationDate)) {
+    if (dayjs().isAfter(threeDaysBeforeFromReservationDate)) {
       throw new BadRequestException('예약 취소는 3일 전까지 가능합니다.');
     }
 
