@@ -10,20 +10,6 @@ export class TourService {
     return this.tourRepository.getOneById(id);
   }
 
-  async checkTourByToken(token: string) {
-    const tour = await this.tourRepository.getOneByToken(token);
-    if (!tour) {
-      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
-    }
-
-    const toursCount = await this.tourRepository.getCountByToken(token);
-
-    const newToken = uuid.v4();
-    await this.tourRepository.updateTourToken(tour.id, newToken);
-
-    return !!toursCount;
-  }
-
   async updateTourReservationLimit(id: number, reservationLimit: number) {
     const tour = await this.tourRepository.getOneById(id);
     if (!tour) {

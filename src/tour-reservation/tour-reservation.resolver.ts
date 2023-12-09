@@ -4,6 +4,7 @@ import {
   AddTourReservationArgs,
   AvailableDatesForReservationArgs,
   DeleteTourReservationArgs,
+  TourReservationByTokenArgs,
 } from './dto';
 
 @Resolver()
@@ -21,6 +22,16 @@ export class TourReservationResolver {
     return this.tourReservationService.getAvailableDates(
       args.tourId,
       args.month,
+    );
+  }
+
+  @Query(() => Boolean, {
+    description: '토큰으로 고객의 해당 투어 예약 여부 확인',
+  })
+  async reservationByToken(@Args() args: TourReservationByTokenArgs) {
+    return this.tourReservationService.getReservationByToken(
+      args.tourId,
+      args.token,
     );
   }
 

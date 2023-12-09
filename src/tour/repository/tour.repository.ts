@@ -18,11 +18,6 @@ export class TourRepository extends Repository<Tour> {
     return this.findOne({ where: { token } });
   }
 
-  async updateTourToken(id: number, token: string) {
-    const updateResult = await this.update({ id }, { token });
-    return updateResult.affected ? true : false;
-  }
-
   async updateTourReservationLimit(id: number, reservationLimit: number) {
     const updateResult = await this.update({ id }, { reservationLimit });
     return updateResult.affected ? true : false;

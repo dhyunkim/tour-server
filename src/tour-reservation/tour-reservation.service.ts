@@ -21,44 +21,18 @@ export class TourReservationService {
     @InjectRedis() private readonly redisService: Redis,
   ) {}
 
-  async addTourReservation(args: IAddTourReservation) {
-    const { tourId, reservationDate } = args;
-
-    const date = dayjs(reservationDate);
-    const weekHoliday = await this.tourHolidayService.getTourHolidayByWeek(
+  async getReservationByToken(tourId: number, token: string) {
+    const tourReservation = await this.tourReservationRepository.getOneByToken(
       tourId,
-      date.format('dddd') as WeekType,
+      token,
     );
-    if (weekHoliday) {
-      throw new BadRequestException('해당 요일은 투어 휴일입니다.');
+    if (!tourReservation) {
+      throw new NotFoundException('고객의 투어 예약이 존재하지 않습니다.');
     }
 
-    const specificHoliday =
-      await this.tourHolidayService.getTourHolidayBySpecific(
-        tourId,
-        date.format('YYYY-MM-DD'),
-      );
-    if (specificHoliday) {
-      throw new BadRequestException('해당 날짜는 투어 휴일입니다.');
-    }
-
-    const tour = await this.tourService.getTourById(tourId);
-    if (!tour) {
-      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
-    }
-
-    const reservationCount =
-      await this.tourReservationRepository.getCountByReservationDate(
-        reservationDate,
-      );
-    if (tour.reservationLimit <= reservationCount) {
-      throw new BadRequestException('예약수가 가득 찼습니다.');
-    }
-
-    const token = uuid.v4();
-    await this.tourReservationRepository.add({ ...args, token });
-
-    return token;
+    const newToken = uuid.v4();
+    await this.tourReservationRepository.updateTourToken(tourId, newToken);
+    return true;
   }
 
   async getAvailableDates(tourId: number, month: string) {
@@ -124,6 +98,46 @@ export class TourReservationService {
     this.redisService.set(cacheKey, JSON.stringify(result), 'EX', 60 * 5);
 
     return result;
+  }
+
+  async addTourReservation(args: IAddTourReservation) {
+    const { tourId, reservationDate } = args;
+
+    const date = dayjs(reservationDate);
+    const weekHoliday = await this.tourHolidayService.getTourHolidayByWeek(
+      tourId,
+      date.format('dddd') as WeekType,
+    );
+    if (weekHoliday) {
+      throw new BadRequestException('해당 요일은 투어 휴일입니다.');
+    }
+
+    const specificHoliday =
+      await this.tourHolidayService.getTourHolidayBySpecific(
+        tourId,
+        date.format('YYYY-MM-DD'),
+      );
+    if (specificHoliday) {
+      throw new BadRequestException('해당 날짜는 투어 휴일입니다.');
+    }
+
+    const tour = await this.tourService.getTourById(tourId);
+    if (!tour) {
+      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
+    }
+
+    const reservationCount =
+      await this.tourReservationRepository.getCountByReservationDate(
+        reservationDate,
+      );
+    if (tour.reservationLimit <= reservationCount) {
+      throw new BadRequestException('예약수가 가득 찼습니다.');
+    }
+
+    const token = uuid.v4();
+    await this.tourReservationRepository.add({ ...args, token });
+
+    return token;
   }
 
   async deleteTourReservation(args: IDeleteTourReservation) {

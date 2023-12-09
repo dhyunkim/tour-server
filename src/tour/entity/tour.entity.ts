@@ -31,11 +31,6 @@ export class Tour {
   @Column({ default: 5 })
   reservationLimit: number;
 
-  @Index('token')
-  @Field()
-  @Column({ length: 50 })
-  token: string;
-
   @Field()
   @CreateDateColumn()
   createdAt: Date;
