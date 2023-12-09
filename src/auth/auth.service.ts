@@ -17,7 +17,7 @@ export class AuthService {
   ) {}
 
   /**
-   * 이메일 회원가입을 할 때 사용하는 함수입니다.
+   * 이메일 회원가입을 할 때 사용하는 함수.
    */
   async signup(args: ISignup) {
     const existsUser = await this.userService.getUserByEmail(args.email);
@@ -34,20 +34,9 @@ export class AuthService {
     return this.signJsonWebToken(newUser.id, Role.USER);
   }
 
-  private signJsonWebToken(userId: number, role: Role) {
-    const accessToken = this.jwtService.sign(
-      { _id: +userId, _role: role },
-      { expiresIn: '3d' },
-    );
-
-    const refreshToken = this.jwtService.sign(
-      { _id: +userId, _role: role, _refresh: true },
-      { expiresIn: '7d' },
-    );
-
-    return { accessToken, refreshToken };
-  }
-
+  /**
+   * 로그인하는 함수.
+   */
   async signin(email: string, password: string) {
     const user = await this.userService.getUserByEmail(email);
     if (!user) {
@@ -60,5 +49,22 @@ export class AuthService {
     }
 
     return this.signJsonWebToken(user.id, Role.USER);
+  }
+
+  /**
+   * JWT를 발행하는 함수. accessToken은 만료가 3일이고 refreshToken는 7일이다.
+   */
+  private signJsonWebToken(userId: number, role: Role) {
+    const accessToken = this.jwtService.sign(
+      { _id: +userId, _role: role },
+      { expiresIn: '3d' },
+    );
+
+    const refreshToken = this.jwtService.sign(
+      { _id: +userId, _role: role, _refresh: true },
+      { expiresIn: '7d' },
+    );
+
+    return { accessToken, refreshToken };
   }
 }

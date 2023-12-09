@@ -47,6 +47,9 @@ export class TourReservationService {
     });
   }
 
+  /**
+   * 월단위로 예약가능한 날들을 조회하는 함수.
+   */
   async getAvailableDates(tourId: number, month: string) {
     const tour = await this.tourService.getTourById(tourId);
     if (!tour) {
