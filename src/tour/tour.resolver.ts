@@ -6,7 +6,7 @@ import { TourService } from './tour.service';
 export class TourResolver {
   constructor(private readonly tourService: TourService) {}
 
-  @Mutation(() => Boolean, { description: '투어 예약 제한 수정' })
+  @Mutation(() => Boolean, { description: '투어 추가' })
   async addTour(@Args() args: AddTourArgs) {
     return this.tourService.addTour(args.userId, args.title);
   }
