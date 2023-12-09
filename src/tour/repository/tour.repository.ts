@@ -22,8 +22,18 @@ export class TourRepository extends Repository<Tour> {
     return this.save(this.create({ userId, title }));
   }
 
+  async updateTour(id: number, title: string) {
+    const updateResult = await this.update({ id }, { title });
+    return updateResult.affected ? true : false;
+  }
+
   async updateTourReservationLimit(id: number, reservationLimit: number) {
     const updateResult = await this.update({ id }, { reservationLimit });
     return updateResult.affected ? true : false;
+  }
+
+  async removeById(id: number) {
+    const removeResult = await this.softDelete(id);
+    return removeResult.affected ? true : false;
   }
 }
