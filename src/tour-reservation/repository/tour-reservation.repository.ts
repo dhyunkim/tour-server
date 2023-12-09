@@ -8,7 +8,7 @@ import {
 
 @EntityRepository(TourReservation)
 export class TourReservationRepository extends Repository<TourReservation> {
-  async getOneById(id) {
+  async getOneById(id: number) {
     return this.findOne(id);
   }
 
