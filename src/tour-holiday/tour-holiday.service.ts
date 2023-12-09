@@ -1,13 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { TourHolidayRepository } from './repository';
 import { IAddTourSpecificHoliday, IAddTourWeekHoliday } from './interface';
 import { WeekType } from './enum';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import { TourService } from '../tour/tour.service';
 
 @Injectable()
 export class TourHolidayService {
   constructor(
     private readonly tourHolidayRepository: TourHolidayRepository,
+    private readonly tourService: TourService,
     @InjectRedis() private readonly redisService: Redis,
   ) {}
 
@@ -24,6 +30,11 @@ export class TourHolidayService {
   }
 
   async addTourWeekHoliday(args: IAddTourWeekHoliday) {
+    const tour = await this.tourService.getTourById(args.tourId);
+    if (!tour) {
+      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
+    }
+
     const weekHoliday = await this.tourHolidayRepository.getOneByWeek(
       args.tourId,
       args.week,
@@ -39,6 +50,11 @@ export class TourHolidayService {
   }
 
   async addTourSpecificHoliday(args: IAddTourSpecificHoliday) {
+    const tour = await this.tourService.getTourById(args.tourId);
+    if (!tour) {
+      throw new NotFoundException('투어 상품이 존재하지 않습니다.');
+    }
+
     const specificHoliday = await this.tourHolidayRepository.getOneBySpecific(
       args.tourId,
       args.specific,
