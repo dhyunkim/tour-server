@@ -91,7 +91,7 @@ export class TourHolidayService {
    */
   private async removeCacheByTourId(tourId: number) {
     const keysPattern = `availableDatesForReservation:${tourId}:*`;
-    const keys = await this.cacheManager.store.keys(keysPattern);
+    const keys: string[] = await this.cacheManager.store.keys(keysPattern);
     await Promise.all(keys.map((key) => this.cacheManager.del(key)));
   }
 }
