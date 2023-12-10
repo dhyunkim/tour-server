@@ -1,8 +1,17 @@
-## Description
+## 프로젝트 설명
 
 - 본 프로젝트는 Nest.JS와 GraphQL을 사용해서 만들었습니다.
 - Rest API 대신 GraphQL을 사용한 이유는 end point의 통합 및 자동으로 API 명세를 만들어 주는 기능을 통해 프론트엔드와 백엔드간의 소통에 대한 부담감을 덜어주며,
 - 필요한 데이터만 골라서 요청해서 가져올 수 있는 장점이 있기 때문에 GraphQL을 사용하게 되었습니다.
+
+## 개발 환경
+
+- Runtime environment: Node.JS v16
+- Language: TypeScript
+- Database: Mysql v5.7
+- Cache: Redis
+- Web application framework: Nest.JS
+- GraphQL
 
 ## NPM 설치
 
