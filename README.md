@@ -56,3 +56,9 @@ $ yarn test:cov
 ## ERD
 
 <img width="779" alt="스크린샷 2023-12-10 오후 3 49 57" src="https://github.com/dhyunkim/tour-server/assets/74766032/38e5e393-085e-4762-afc5-70c58dba6fa5">
+
+## 테스트 커버리지
+
+- service 함수에 유닛테스트들을 작성했고 테스트 커버리지는 100을 만들었습니다.
+
+<img width="563" alt="스크린샷 2023-12-10 오후 3 02 10" src="https://github.com/dhyunkim/tour-server/assets/74766032/13371987-2158-428e-b198-691eea5e3b67">
