@@ -60,9 +60,9 @@ export class TourReservationService {
 
     // 캐싱이 되어있는지 확인하고 캐싱되어있으면 캐싱한 데이터를 반환한다.
     const cacheKey = `availableDatesForReservation:${tourId}:${month}`;
-    const cacheData = await this.cacheManager.get<string>(cacheKey);
+    const cacheData = await this.cacheManager.get<string[]>(cacheKey);
     if (cacheData) {
-      return JSON.parse(cacheData);
+      return cacheData;
     }
 
     // 입력받은 월의 날짜별 예약수를 조회한다.
@@ -118,7 +118,7 @@ export class TourReservationService {
       .filter(Boolean);
 
     // 레디스 캐싱한다. TTL은 5분.
-    this.cacheManager.set(cacheKey, JSON.stringify(result), 60 * 5);
+    this.cacheManager.set(cacheKey, result, 60 * 5);
 
     return result;
   }

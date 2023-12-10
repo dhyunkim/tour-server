@@ -87,7 +87,7 @@ export class TourHolidayService {
   }
 
   /**
-   * 투어의 캐시들을 초기화하는 함수.
+   * 투어의 캐시들을 삭제하는 함수.
    */
   private async removeCacheByTourId(tourId: number) {
     const keysPattern = `availableDatesForReservation:${tourId}:*`;
