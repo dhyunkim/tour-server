@@ -2,7 +2,6 @@ import { ArgsType, Field, Int } from '@nestjs/graphql';
 import {
   IsDateString,
   IsInt,
-  Length,
   MaxLength,
   Min,
   MinLength,
