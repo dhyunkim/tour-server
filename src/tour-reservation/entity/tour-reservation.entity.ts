@@ -9,6 +9,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Tour } from '../../tour/entity';
+import { User } from '../../user/entity';
 
 @ObjectType()
 @Entity()
@@ -44,4 +45,10 @@ export class TourReservation {
   })
   @JoinColumn({ name: 'tourId' })
   tour: Tour;
+
+  @ManyToOne(() => User, (entity) => entity.tourReservations, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 }

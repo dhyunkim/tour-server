@@ -4,10 +4,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Gender } from '../enum';
+import { Tour } from '../../tour/entity';
+import { TourReservation } from '../../tour-reservation/entity';
 
 @ObjectType()
 @Entity()
@@ -48,4 +51,10 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @OneToMany(() => Tour, (entity) => entity.user)
+  tours: Tour[];
+
+  @OneToMany(() => TourReservation, (entity) => entity.user)
+  tourReservations: TourReservation[];
 }
