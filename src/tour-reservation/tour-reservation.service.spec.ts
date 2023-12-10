@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { TourReservationService } from './tour-reservation.service';
 import { TourReservationRepository } from './repository';
 import { MockTourReservationRepository } from '../../test/mock/repository';
@@ -11,7 +12,8 @@ import { MockCacheManager } from '../../test/mock/cache-manager.mock';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { TourService } from '../tour/tour.service';
 import { TourReservation } from './entity';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { IAddTourReservation } from './inteface';
+import { Tour } from '../tour/entity';
 
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('newToken'),
@@ -19,6 +21,8 @@ jest.mock('uuid', () => ({
 
 describe('TourReservationService', () => {
   let service: TourReservationService;
+  let tourService: TourService;
+  let tourHolidayService: TourHolidayService;
   let tourReservationRepository: TourReservationRepository;
 
   beforeEach(async () => {
@@ -45,6 +49,8 @@ describe('TourReservationService', () => {
     }).compile();
 
     service = module.get<TourReservationService>(TourReservationService);
+    tourService = module.get<TourService>(TourService);
+    tourHolidayService = module.get<TourHolidayService>(TourHolidayService);
     tourReservationRepository = module.get<TourReservationRepository>(
       TourReservationRepository,
     );
@@ -95,7 +101,7 @@ describe('TourReservationService', () => {
       const tourId = 1;
       const token = 'token';
 
-      // when
+      // when - then
       await expect(
         service.getReservationByToken({ tourId, token }),
       ).rejects.toThrow(
@@ -160,6 +166,7 @@ describe('TourReservationService', () => {
     it('현재일이 예약 3일전이 아니라면 에러가 발생해야 한다.', async () => {
       // given
       jest.useFakeTimers().setSystemTime(new Date('2023-12-10 00:00:00'));
+
       const tourReservation = new TourReservation();
       tourReservation.reservationDate = '2023-12-11';
       jest
@@ -177,6 +184,269 @@ describe('TourReservationService', () => {
       expect(
         tourReservationRepository.deleteTourReservation,
       ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('addTourReservation()', () => {
+    it('normal case', async () => {
+      // given
+      jest.useFakeTimers().setSystemTime(new Date('2023-12-10 00:00:00'));
+
+      const tour = new Tour();
+      tour.reservationLimit = 5;
+      jest.spyOn(tourService, 'getTourById').mockResolvedValue(tour);
+      jest
+        .spyOn(tourReservationRepository, 'getOneByUser')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(tourHolidayService, 'getTourHolidayByWeek')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(tourHolidayService, 'getTourHolidayBySpecific')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(tourReservationRepository, 'getCountByReservationDate')
+        .mockResolvedValue(3);
+
+      const args: IAddTourReservation = {
+        userId: 1,
+        tourId: 1,
+        reservationDate: '2023-12-12',
+      };
+
+      // when
+      const result = await service.addTourReservation(args);
+
+      // then
+      expect(tourService.getTourById).toHaveBeenCalledWith(args.tourId);
+      expect(tourService.getTourById).toHaveBeenCalledTimes(1);
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledWith(
+        args.tourId,
+        args.userId,
+        args.reservationDate,
+      );
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledTimes(1);
+      expect(tourHolidayService.getTourHolidayByWeek).toHaveBeenCalledWith(
+        args.tourId,
+        'Tuesday',
+      );
+      expect(tourHolidayService.getTourHolidayByWeek).toHaveBeenCalledTimes(1);
+      expect(tourHolidayService.getTourHolidayBySpecific).toHaveBeenCalledWith(
+        args.tourId,
+        '2023-12-12',
+      );
+      expect(tourHolidayService.getTourHolidayBySpecific).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(
+        tourReservationRepository.getCountByReservationDate,
+      ).toHaveBeenCalledWith('2023-12-12');
+      expect(
+        tourReservationRepository.getCountByReservationDate,
+      ).toHaveBeenCalledTimes(1);
+      expect(tourReservationRepository.add).toHaveBeenCalledWith({
+        ...args,
+        token: 'newToken',
+      });
+      expect(tourReservationRepository.add).toHaveBeenCalledTimes(1);
+      expect(result).toEqual('newToken');
+    });
+
+    it('등록되지 않은 투어 ID를 입력하면 에러가 발생해야 한다.', async () => {
+      // given
+      jest.spyOn(tourService, 'getTourById').mockResolvedValue(undefined);
+
+      const args: IAddTourReservation = {
+        userId: 1,
+        tourId: 1,
+        reservationDate: '2023-12-12',
+      };
+
+      // when - then
+      await expect(service.addTourReservation(args)).rejects.toThrow(
+        new NotFoundException('투어 상품이 존재하지 않습니다.'),
+      );
+      expect(tourService.getTourById).toHaveBeenCalledWith(args.tourId);
+      expect(tourService.getTourById).toHaveBeenCalledTimes(1);
+      expect(tourReservationRepository.getOneByUser).not.toHaveBeenCalled();
+      expect(tourHolidayService.getTourHolidayByWeek).not.toHaveBeenCalled();
+      expect(
+        tourHolidayService.getTourHolidayBySpecific,
+      ).not.toHaveBeenCalled();
+      expect(
+        tourReservationRepository.getCountByReservationDate,
+      ).not.toHaveBeenCalled();
+      expect(tourReservationRepository.add).not.toHaveBeenCalled();
+    });
+
+    it('이미 예약한 투어를 예약하려하면 에러가 발생해야 한다.', async () => {
+      // given
+      const args: IAddTourReservation = {
+        userId: 1,
+        tourId: 1,
+        reservationDate: '2023-12-12',
+      };
+
+      // when - then
+      await expect(service.addTourReservation(args)).rejects.toThrow(
+        new NotFoundException('이미 예약한 투어 상품입니다.'),
+      );
+      expect(tourService.getTourById).toHaveBeenCalledWith(args.tourId);
+      expect(tourService.getTourById).toHaveBeenCalledTimes(1);
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledWith(
+        args.tourId,
+        args.userId,
+        args.reservationDate,
+      );
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledTimes(1);
+      expect(tourHolidayService.getTourHolidayByWeek).not.toHaveBeenCalled();
+      expect(
+        tourHolidayService.getTourHolidayBySpecific,
+      ).not.toHaveBeenCalled();
+      expect(
+        tourReservationRepository.getCountByReservationDate,
+      ).not.toHaveBeenCalled();
+      expect(tourReservationRepository.add).not.toHaveBeenCalled();
+    });
+
+    it('예약하려는 날이 투어휴일(요일)이라면 에러가 발생해야 한다.', async () => {
+      // given
+      jest
+        .spyOn(tourReservationRepository, 'getOneByUser')
+        .mockResolvedValue(undefined);
+
+      const args: IAddTourReservation = {
+        userId: 1,
+        tourId: 1,
+        reservationDate: '2023-12-12',
+      };
+
+      // when - then
+      await expect(service.addTourReservation(args)).rejects.toThrow(
+        new BadRequestException('해당 요일은 투어 휴일입니다.'),
+      );
+      expect(tourService.getTourById).toHaveBeenCalledWith(args.tourId);
+      expect(tourService.getTourById).toHaveBeenCalledTimes(1);
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledWith(
+        args.tourId,
+        args.userId,
+        args.reservationDate,
+      );
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledTimes(1);
+      expect(tourHolidayService.getTourHolidayByWeek).toHaveBeenCalledWith(
+        args.tourId,
+        'Tuesday',
+      );
+      expect(tourHolidayService.getTourHolidayByWeek).toHaveBeenCalledTimes(1);
+      expect(
+        tourHolidayService.getTourHolidayBySpecific,
+      ).not.toHaveBeenCalled();
+      expect(
+        tourReservationRepository.getCountByReservationDate,
+      ).not.toHaveBeenCalled();
+      expect(tourReservationRepository.add).not.toHaveBeenCalled();
+    });
+
+    it('예약하려는 날이 투어휴일(날짜)이라면 에러가 발생해야 한다.', async () => {
+      // given
+      jest
+        .spyOn(tourReservationRepository, 'getOneByUser')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(tourHolidayService, 'getTourHolidayByWeek')
+        .mockResolvedValue(undefined);
+
+      const args: IAddTourReservation = {
+        userId: 1,
+        tourId: 1,
+        reservationDate: '2023-12-12',
+      };
+
+      // when - then
+      await expect(service.addTourReservation(args)).rejects.toThrow(
+        new BadRequestException('해당 날짜는 투어 휴일입니다.'),
+      );
+      expect(tourService.getTourById).toHaveBeenCalledWith(args.tourId);
+      expect(tourService.getTourById).toHaveBeenCalledTimes(1);
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledWith(
+        args.tourId,
+        args.userId,
+        args.reservationDate,
+      );
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledTimes(1);
+      expect(tourHolidayService.getTourHolidayByWeek).toHaveBeenCalledWith(
+        args.tourId,
+        'Tuesday',
+      );
+      expect(tourHolidayService.getTourHolidayByWeek).toHaveBeenCalledTimes(1);
+      expect(tourHolidayService.getTourHolidayBySpecific).toHaveBeenCalledWith(
+        args.tourId,
+        '2023-12-12',
+      );
+      expect(tourHolidayService.getTourHolidayBySpecific).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(
+        tourReservationRepository.getCountByReservationDate,
+      ).not.toHaveBeenCalled();
+      expect(tourReservationRepository.add).not.toHaveBeenCalled();
+    });
+
+    it('예약하려는 날의 예약 제한이 가득찼으면 에러가 발생해야 한다.', async () => {
+      // given
+      const tour = new Tour();
+      tour.reservationLimit = 5;
+      jest.spyOn(tourService, 'getTourById').mockResolvedValue(tour);
+      jest
+        .spyOn(tourReservationRepository, 'getOneByUser')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(tourHolidayService, 'getTourHolidayByWeek')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(tourHolidayService, 'getTourHolidayBySpecific')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(tourReservationRepository, 'getCountByReservationDate')
+        .mockResolvedValue(5);
+
+      const args: IAddTourReservation = {
+        userId: 1,
+        tourId: 1,
+        reservationDate: '2023-12-12',
+      };
+
+      // when - then
+      await expect(service.addTourReservation(args)).rejects.toThrow(
+        new BadRequestException('예약수가 가득 찼습니다.'),
+      );
+      expect(tourService.getTourById).toHaveBeenCalledWith(args.tourId);
+      expect(tourService.getTourById).toHaveBeenCalledTimes(1);
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledWith(
+        args.tourId,
+        args.userId,
+        args.reservationDate,
+      );
+      expect(tourReservationRepository.getOneByUser).toHaveBeenCalledTimes(1);
+      expect(tourHolidayService.getTourHolidayByWeek).toHaveBeenCalledWith(
+        args.tourId,
+        'Tuesday',
+      );
+      expect(tourHolidayService.getTourHolidayByWeek).toHaveBeenCalledTimes(1);
+      expect(tourHolidayService.getTourHolidayBySpecific).toHaveBeenCalledWith(
+        args.tourId,
+        '2023-12-12',
+      );
+      expect(tourHolidayService.getTourHolidayBySpecific).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(
+        tourReservationRepository.getCountByReservationDate,
+      ).toHaveBeenCalledWith('2023-12-12');
+      expect(
+        tourReservationRepository.getCountByReservationDate,
+      ).toHaveBeenCalledTimes(1);
+      expect(tourReservationRepository.add).not.toHaveBeenCalled();
     });
   });
 });

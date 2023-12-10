@@ -1,5 +1,6 @@
-import { Tour } from '../../../src/tour/entity';
+import { TourHoliday } from '../../../src/tour-holiday/entity';
 
 export const MockTourHolidayService = () => ({
-  getTourById: jest.fn().mockResolvedValue(new Tour()),
+  getTourHolidayByWeek: jest.fn().mockResolvedValue(new TourHoliday()),
+  getTourHolidayBySpecific: jest.fn().mockResolvedValue(new TourHoliday()),
 });
