@@ -58,7 +58,7 @@ $ yarn start
 # unit tests (전체 테스트)
 $ yarn test
 
-# unit test (각 파일별 테스트) e.g) yarn test tour.service.ts
+# unit test (각 파일별 테스트) e.g) yarn test tour.service.spec.ts
 $ yarn test 파일명
 
 # unit test 커버리지
