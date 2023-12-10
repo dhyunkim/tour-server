@@ -117,8 +117,8 @@ export class TourReservationService {
       })
       .filter(Boolean);
 
-    // 레디스 캐싱한다. TTL은 5분.
-    this.cacheManager.set(cacheKey, result, 60 * 5);
+    // 레디스 캐싱한다.
+    this.cacheManager.set(cacheKey, result, 60 * 60 * 5);
 
     return result;
   }
