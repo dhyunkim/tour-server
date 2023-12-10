@@ -11,6 +11,7 @@
 - Database: Mysql v5.7
 - Cache: Redis
 - Web application framework: Nest.JS
+- ORM: TypeORM
 - GraphQL
 
 ## NPM 설치
