@@ -24,6 +24,10 @@ describe('UserService', () => {
     userRepository = module.get<UserRepository>(UserRepository);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });

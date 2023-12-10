@@ -42,6 +42,10 @@ describe('AuthService', () => {
     jest.spyOn(bcrypt, 'hash').mockImplementation(() => 'hashedPassword');
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });

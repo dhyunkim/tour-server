@@ -24,6 +24,10 @@ describe('TourService', () => {
     tourRepository = module.get<TourRepository>(TourRepository);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });

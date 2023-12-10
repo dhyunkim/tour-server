@@ -60,6 +60,10 @@ describe('TourReservationService', () => {
     cache = module.get(CACHE_MANAGER);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
