@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { Cache } from 'cache-manager';
 import { TourHolidayService } from './tour-holiday.service';
 import { TourHolidayRepository } from './repository';
 import { TourService } from '../tour/tour.service';
@@ -9,6 +10,7 @@ import { MockCacheManager } from '../../test/mock/cache-manager.mock';
 
 describe('TourHolidayService', () => {
   let service: TourHolidayService;
+  let cache: Cache;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,6 +32,7 @@ describe('TourHolidayService', () => {
     }).compile();
 
     service = module.get<TourHolidayService>(TourHolidayService);
+    cache = module.get(CACHE_MANAGER);
   });
 
   it('should be defined', () => {

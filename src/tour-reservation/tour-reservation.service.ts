@@ -14,9 +14,9 @@ import {
   IDeleteTourReservation,
   IGetReservationByToken,
 } from './inteface';
-import { TourReservationRepository } from './repository/tour-reservation.repository';
 import { TourHolidayService } from '../tour-holiday/tour-holiday.service';
 import { TourService } from '../tour/tour.service';
+import { TourReservationRepository } from './repository';
 
 @Injectable()
 export class TourReservationService {

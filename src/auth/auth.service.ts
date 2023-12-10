@@ -52,7 +52,7 @@ export class AuthService {
   }
 
   /**
-   * JWT를 발행하는 함수. accessToken은 만료가 3일이고 refreshToken는 7일이다.
+   * JWT를 발행하는 함수. accessToken은 만료가 3일이고 refreshToken은 7일이다.
    */
   signJsonWebToken(userId: number, role: Role) {
     const accessToken = this.jwtService.sign(

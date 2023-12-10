@@ -3,7 +3,7 @@ export const MockCacheManager = () => ({
   set: jest.fn().mockResolvedValue(undefined),
   del: jest.fn().mockResolvedValue(undefined),
   store: {
-    keys: jest.fn().mockResolvedValue(undefined),
+    keys: jest.fn().mockResolvedValue([]),
     del: jest.fn().mockResolvedValue(undefined),
   },
 });

@@ -5,11 +5,11 @@ import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { MockJwtService, MockUserService } from '../../test/mock/service';
 import { ISignup } from './interface';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { User } from '../user/entity';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let jwtService: JwtService;
   let userService: UserService;
 
   beforeEach(async () => {
@@ -28,20 +28,8 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    jwtService = module.get<JwtService>(JwtService);
     userService = module.get<UserService>(UserService);
 
-    jest.spyOn(service, 'signJsonWebToken').mockReturnValue({
-      accessToken: 'accessToken',
-      refreshToken: 'refreshToken',
-    });
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
-  describe('signup()', () => {
     jest
       .spyOn(bcrypt, 'compare')
       .mockImplementation(async (password, userPassword) => {
@@ -52,7 +40,13 @@ describe('AuthService', () => {
         }
       });
     jest.spyOn(bcrypt, 'hash').mockImplementation(() => 'hashedPassword');
+  });
 
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('signup()', () => {
     it('normal case', async () => {
       // given
       jest.spyOn(userService, 'getUserByEmail').mockResolvedValue(undefined);
@@ -75,8 +69,8 @@ describe('AuthService', () => {
       });
       expect(userService.addUser).toHaveBeenCalledTimes(1);
       expect(result).toEqual({
-        accessToken: 'accessToken',
-        refreshToken: 'refreshToken',
+        accessToken: 'token',
+        refreshToken: 'token',
       });
     });
 
@@ -95,6 +89,61 @@ describe('AuthService', () => {
       expect(userService.getUserByEmail).toHaveBeenCalledWith(args.email);
       expect(userService.getUserByEmail).toHaveBeenCalledTimes(1);
       expect(userService.addUser).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('signin()', () => {
+    it('normal case', async () => {
+      // given
+      const user = new User();
+      user.password = '12345678';
+      jest.spyOn(userService, 'getUserByEmail').mockResolvedValue(user);
+
+      const email = 'test@naver.com';
+      const password = '12345678';
+
+      // when
+      const result = await service.signin(email, password);
+
+      // then
+      expect(userService.getUserByEmail).toHaveBeenCalledWith(email);
+      expect(userService.getUserByEmail).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({
+        accessToken: 'token',
+        refreshToken: 'token',
+      });
+    });
+
+    it('비밀번호가 틀리면 에러가 발생해야 한다.', async () => {
+      // given
+      const user = new User();
+      user.password = '99999999';
+      jest.spyOn(userService, 'getUserByEmail').mockResolvedValue(user);
+
+      const email = 'test@naver.com';
+      const password = '12345678';
+
+      // when - then
+      await expect(service.signin(email, password)).rejects.toThrow(
+        new BadRequestException('비밀번호가 잘 못 입력되었습니다.'),
+      );
+      expect(userService.getUserByEmail).toHaveBeenCalledWith(email);
+      expect(userService.getUserByEmail).toHaveBeenCalledTimes(1);
+    });
+
+    it('회원가입하지 않은 이메일을 입력하면 에러가 발생해야 한다.', async () => {
+      // given
+      jest.spyOn(userService, 'getUserByEmail').mockResolvedValue(undefined);
+
+      const email = 'test@naver.com';
+      const password = '12345678';
+
+      // when - then
+      await expect(service.signin(email, password)).rejects.toThrow(
+        new NotFoundException('회원가입한 유저가 아닙니다.'),
+      );
+      expect(userService.getUserByEmail).toHaveBeenCalledWith(email);
+      expect(userService.getUserByEmail).toHaveBeenCalledTimes(1);
     });
   });
 });
