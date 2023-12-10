@@ -43,13 +43,13 @@ $ yarn start
 ## 테스팅 방법
 
 ```bash
-# unit tests (전체)
+# unit tests (전체 테스트)
 $ yarn run test
 
-# unit test (각 파일별) e.g) yarn test tour.service.ts
+# unit test (각 파일별 테스트) e.g) yarn test tour.service.ts
 $ yarn run test 파일명
 
-# test coverage
+# unit test 커버리지
 $ yarn test:cov
 ```
 
