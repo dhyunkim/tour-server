@@ -61,7 +61,7 @@ export class TourReservationService {
     // 캐싱이 되어있는지 확인하고 캐싱되어있으면 캐싱한 데이터를 반환한다.
     const cacheKey = `availableDatesForReservation:${tourId}:${month}`;
     const cacheData = await this.cacheManager.get<string[]>(cacheKey);
-    if (cacheData) {
+    if (cacheData?.length) {
       return cacheData;
     }
 
@@ -118,7 +118,7 @@ export class TourReservationService {
       .filter(Boolean);
 
     // 레디스 캐싱한다.
-    this.cacheManager.set(cacheKey, result, 60 * 60 * 5);
+    this.cacheManager.set(cacheKey, result);
 
     return result;
   }
