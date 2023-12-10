@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Tour } from '../../tour/entity';
 import { User } from '../../user/entity';
@@ -39,6 +40,9 @@ export class TourReservation {
   @Field()
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(() => Tour, (entity) => entity.tourReservations, {
     createForeignKeyConstraints: false,
