@@ -1,6 +1,6 @@
 ## 프로젝트 설명
 
-- 본 프로젝트는 Nest.JS와 GraphQL을 사용해서 만들었습니다.
+- 본 프로젝트는 여행 예약 시스템을 구현한 프로젝트이며 Nest.JS와 GraphQL을 사용해서 만들었습니다.
 - Rest API 대신 GraphQL을 사용한 이유는 end point의 통합 및 자동으로 API 명세를 만들어 주는 기능을 통해 프론트엔드와 백엔드간의 소통에 대한 부담감을 덜어주며,
 - 필요한 데이터만 골라서 요청해서 가져올 수 있는 장점이 있기 때문에 GraphQL을 사용하게 되었습니다.
 
@@ -91,9 +91,3 @@ $ yarn test:cov
 - playground에서 추가, 수정, 삭제를 할 때는 mutation을 사용하며 아래 이미지와 같이 사용합니다.
 
 <img width="1377" alt="스크린샷 2023-12-10 오후 4 24 43" src="https://github.com/dhyunkim/tour-server/assets/74766032/d8d4662d-8850-4f63-8013-f2603470ce56">
-
-## 추가 구현 사항
-
-- 제가 생각했을 때 투어를 예약할 때 JWT 인증 시스템이 필요하다고 생각했고 이를 위해 JWT를 이용한 회원가입, 로그인 기능과 투어를 추가, 수정, 삭제할 수 있는 기능을 추가로 구현했습니다.
-- 해당 API 이름은 signup, signin, addTour, updateTour, removeTour 입니다.
-- 또한, JWT 가드를 전역으로 설정했으며 REST API와 GraphQL 모두 사용할 수 있는 JWT 인증 시스템을 만들었습니다.
