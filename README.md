@@ -67,27 +67,10 @@ $ yarn test:cov
 
 ## ERD
 
-<img width="779" alt="스크린샷 2023-12-10 오후 3 49 57" src="https://github.com/dhyunkim/tour-server/assets/74766032/38e5e393-085e-4762-afc5-70c58dba6fa5">
+<img width="779" alt="스크린샷 2023-12-10 오후 3 49 57" src="https://github.com/dhyunkim/tour-server/assets/74766032/144be829-ec10-4862-a67c-1f7086502c9e">
 
 ## 테스트 커버리지
 
 - service 함수에 유닛테스트들을 작성했고 테스트 커버리지는 100을 만들었습니다.
 
-<img width="563" alt="스크린샷 2023-12-10 오후 3 02 10" src="https://github.com/dhyunkim/tour-server/assets/74766032/13371987-2158-428e-b198-691eea5e3b67">
-
-## API 테스트 방법
-
-- 본 프로젝트는 GraphQL을 이용해서 만들었기 때문에 테스트를 하려면 localhost:3000/graphql 로 접속하신다음, playground를 사용해서 API 테스트를 하시면 됩니다.
-- 또한, JWT 가드를 사용했기 때문에 API 테스트를 하시려면 회원가입을 통해 JWT를 발급받으셔서 사용하셔야 합니다.
-- 회원가입은 간단한 email 회원가입으로 만들었으며 비밀번호는 8자 이상으로 입력하시면 됩니다.
-- 그리고 발급받으신 JWT를 아래 이미지와 같이 playground에서 넣어서 사용하시면 됩니다.
-
-<img width="677" alt="스크린샷 2023-12-10 오후 3 58 20" src="https://github.com/dhyunkim/tour-server/assets/74766032/e462dfc5-b5c0-4414-8819-afdbfbe62595">
-
-- playground에서 조회를 할 때는 query를 사용하며 아래 이미지와 같이 사용합니다.
-
-<img width="1441" alt="스크린샷 2023-12-10 오후 4 25 02" src="https://github.com/dhyunkim/tour-server/assets/74766032/85b0aa26-3a81-4d15-b43f-955bfdec37e3">
-
-- playground에서 추가, 수정, 삭제를 할 때는 mutation을 사용하며 아래 이미지와 같이 사용합니다.
-
-<img width="1377" alt="스크린샷 2023-12-10 오후 4 24 43" src="https://github.com/dhyunkim/tour-server/assets/74766032/d8d4662d-8850-4f63-8013-f2603470ce56">
+<img width="563" alt="스크린샷 2023-12-10 오후 3 02 10" src="https://github.com/dhyunkim/tour-server/assets/74766032/8281a2c9-6ca8-4cf5-92a3-c099e52707e7">
